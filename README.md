@@ -73,4 +73,18 @@ Require all granted
 ```
 * Enable “wsgi mod” by typing: `sudo a2enmod wsgi`
 * Restart the server `sudo service apache2 restart`.
-* Now you should be able to reach the Web-app at http://localhost/display 
+* Now you should be able to reach the Web-app at http://localhost/display (or http://your_IP_address/display).
+
+## Optional: set up password log in ##
+The following instruction enables a simple 1 user password log in for your *Doberman WebApp*.
+
+* `pip3 install django-password-protect`
+* Open *settings.py* in */path to your WebApp/slow* and add `django_password_protect.PasswordProtectMiddleware` to MIDDLEWARE_CLASSES.
+* In the same file add the following three lines below your MIDDLEWARE_CLASSES:
+
+```
+#!python
+PASSWORD_PROTECT = True
+PASSWORD_PROTECT_USERNAME = 'your_username'
+PASSWORD_PROTECT_PASSWORD = 'your_password'
+```
