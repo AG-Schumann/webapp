@@ -52,6 +52,7 @@ DATABASES = {
 * `python3 manage.py migrate`
 
 # Set up the WebApp with apache #
+* `sudo apt-get install apache2`
 * `sudo apt-get install apache2-dev`
 * `sudo apt-get install libapache2-mod-wsgi-py3`
 *  Add the following lines to the apache2.conf file (located in /etc/apache2):
