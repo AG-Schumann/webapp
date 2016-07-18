@@ -1,0 +1,53 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>SlowControl</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"> 
+        <link rel="stylesheet" href="{% static 'css/display.css' %}"> 
+	   <link rel="stylesheet" href="{% static 'css/styles.css' %}"> 
+	   <link rel="stylesheet" href="{% static 'css/monitor.css' %}"> 
+	   <meta charset='utf-8'>
+	   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    </head>
+    <div id="headerBar"></div>
+
+    <body>
+
+	<!-- header bar with title -->
+	<header>
+		<h1>SlowControl</h1>
+		<h2>home</h2>
+	</header>
+
+	<!-- menu bar on left side -->
+	<div id='cssmenu'>
+	<ul>
+	   <li><a href='/display/'><span>Home</span></a></li>
+	   <li class='active has-sub'><a href='/display/'><span>Controllers</span></a>
+		  <ul>
+			{% if Config_list %}
+				{% for config in Config_list %}
+					<li class='last'><a href="/display/{{ config.controller }}/"><span>{{ config.controller }}</span></a></li>
+				{% endfor %}
+			{% else %}
+				<p>No controllers are available.</p>
+			{% endif %}
+		  </ul>
+	   </li>
+	   <li><a href='/display/monitor/'><span>Monitor</span></a></li>
+	</ul>
+	</div>
+
+	<!-- main section -->
+	<section>
+
+test
+
+	</section> 
+
+    </body>
+</html>

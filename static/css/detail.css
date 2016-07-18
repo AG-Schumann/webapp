@@ -1,0 +1,17 @@
+
+table {
+    text-align: center;
+    border-collapse: collapse;
+    width: 48%; 
+	margin-top: 10px;
+	margin: 0.5em;
+}
+
+
+#overview_table td { padding: 1.5rem; font-size: 1.3rem; }
+#overview_table tr {background: hsl(50, 50%, 80%); }
+#overview_table tr, td { transition: .4s ease-in; } 
+#overview_table tr:first-child {background: rgba(74, 153, 186, 0.5); }
+#overview_table tr:nth-child(even) { background: rgba(98, 206, 252, 0.5); }
+
+

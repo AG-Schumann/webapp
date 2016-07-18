@@ -1,0 +1,93 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <title>SlowControl</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+	    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+	    <link rel="stylesheet" href="{% static 'css/monitor.css' %}"> 
+	    <link rel="stylesheet" href="{% static 'css/detail.css' %}">
+
+	    <meta charset='utf-8'>
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+
+    <!------- include plot.ly ------->
+      <script type="text/javascript" src="{% static 'js/plotly.js-1.12.0/dist/plotly.min.js' %}"></script>
+  <!--    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>  -->
+
+    <!------- date range picker from http://www.daterangepicker.com/ ------->
+        <!-- Include Required Prerequisites -->
+        <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <!-- Include Date Range Picker -->
+        <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" /> 
+        <!-- js for date range picker -->
+        <script type="text/javascript">
+        $(function() {
+            $('input[name="daterange"]').daterangepicker({
+                timePicker: true,
+                timePicker24Hour: true,
+                timePickerIncrement: 30,
+                ranges: {
+                   'Last hour': [moment().subtract(1, 'hours'), moment()],
+                   'Last 3 hours': [moment().subtract(3, 'hours'), moment()],
+                   'Last Day': [moment().subtract(1, 'days'), moment()],
+                   'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                   'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                },
+                locale: {
+                    format: 'MM/DD/YYYY hh:mm A'
+                }
+            });
+        });
+        </script>
+    <!-- end date range picker from http://www.daterangepicker.com/ -->
+
+
+    </head>
+    <div id="headerBar"></div>
+
+    <body>
+	    <!-- header bar with title -->
+	    <header>
+		    <h1>SlowControl</h1>
+		    <h2>{% block subtitle %}{% endblock %}</h2>
+	    </header>
+
+	    <!-- menu bar on left side -->
+	    <div id='cssmenu'>
+	    <ul>
+	       <li><a href='{% url 'index' %}'><span>Home</span></a></li>
+	       <li class='active has-sub'><a href='{% url 'index' %}'><span>Controllers</span></a>
+		      <ul>
+			    {% if Config_list %}
+				    {% for config in Config_list %}
+					    <li class='last'><a href="{% url 'index' %}detail/{{ config.controller }}/"><span>{{ config.controller }}</span></a></li>
+				    {% endfor %}
+			    {% else %}
+				    <p>No controllers are available.</p>
+			    {% endif %}
+		      </ul>
+	       </li>
+	       <li><a href='{% url 'index' %}monitor/'><span>Monitor</span></a></li>
+	    </ul>
+	
+	    {% block sidebar %}
+        {% endblock %}
+	    </div>
+
+	    <!-- main section -->
+	    <section>
+        {% block content %}
+        {% endblock %}
+	    </section> 
+    </body>
+    
+
+	{% block javascript %}
+    {% endblock %}
+
+</html>
