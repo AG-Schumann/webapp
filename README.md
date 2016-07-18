@@ -50,7 +50,7 @@ DATABASES = {
 }
 ```
 * `python3 manage.py migrate`
-* `apt-get install apache2-dev`
+* `sudo apt-get install apache2-dev`
 * `sudo apt-get install libapache2-mod-wsgi-py3`
 *  Add the following lines to the apache2.conf file (located in /etc/apache2):
     * replace */paht/to/your/app* with the directory where you installed *Doberman WebApp*, but leave the rest of the path as it already is in the file.
