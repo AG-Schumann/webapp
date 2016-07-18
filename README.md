@@ -31,7 +31,7 @@ This installation guide assumes that you already fully completed the installatio
     * `sudo apt-get install python3-psycopg2`
     * `sudo apt-get install libpq-dev`
     * Download django-dbarray0.2 from [here](https://pypi.python.org/pypi/django-dbarray/0.2).
-    * Extract file: `tar -xzvf file.tar.gz`.
+    * Extract file: `tar -xzvf django-dbarray-0.2.tar.gz`.
     * Install django-dbarray: `sudo python3 setup.py install`.
 * Download *Doberman WebApp* to a directory: `git clone https://Doberman_slowcontrol@bitbucket.org/Doberman_slowcontrol/webapp.git`
 
@@ -49,7 +49,7 @@ DATABASES = {
     }
 }
 ```
-* `python3 manage.py migrate`
+* Initial set up of application: `python3 manage.py migrate`
 
 ### Set up the WebApp with apache ###
 * `sudo apt-get install apache2`
