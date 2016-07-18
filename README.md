@@ -50,6 +50,27 @@ DATABASES = {
 }
 ```
 * `python3 manage.py migrate`
-* `sudo apt-get install aptitude`
-* `sudo aptitude install apache2 apache2.2-common apache2-mpm-prefork apache2-utils libexpat1 ssl-cert`
-* `sudo pip3 install mod_wsgi`
+* `apt-get install apache2-dev`
+* `sudo apt-get install libapache2-mod-wsgi-py3`
+*  Add the following lines to the apache2.conf file (located in /etc/apache2):
+    * replace */paht/to/your/app* with the directory where you installed *Doberman WebApp*, but leave the rest of the path as it already is in the file.
+```
+#!python
+WSGIScriptAlias / /paht/to/your/app/slow/wsgi.py
+WSGIPythonPath /paht/to/your/app
+ 
+Alias /static/ /paht/to/your/app/static/
+ 
+<Directory /paht/to/your/app/static>
+Require all granted
+</Directory>
+ 
+<Directory /paht/to/your/app/slow>
+	<Files wsgi.py>
+		Require all granted
+	</Files>
+</Directory>
+```
+* Enable “wsgi mod” by typing: `sudo a2enmod wsgi`
+* Restart the server `sudo service apache2 restart`.
+* Now you should be able to reach the Web-app at http://localhost/display 
