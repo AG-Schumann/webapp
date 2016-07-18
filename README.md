@@ -81,10 +81,10 @@ The following instruction enables a simple 1 user password log in for your *Dobe
 * `pip3 install django-password-protect`
 * Open *settings.py* in */path to your WebApp/slow* and add `django_password_protect.PasswordProtectMiddleware` to MIDDLEWARE_CLASSES.
 * In the same file add the following three lines below your MIDDLEWARE_CLASSES:
-
 ```
 #!python
 PASSWORD_PROTECT = True
 PASSWORD_PROTECT_USERNAME = 'your_username'
 PASSWORD_PROTECT_PASSWORD = 'your_password'
 ```
+* Restart apache2
