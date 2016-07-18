@@ -25,7 +25,7 @@ This installation guide assumes that you already fully completed the installatio
 
 
 * Install pip3: `sudo apt install python3-pip`.
-* Install Django web framework: `sudo pip3 install django`.
+* Install Django web framework: `pip3 install django`.
 * Install django-dbarray0.2:
     * `sudo apt-get install postgresql`
     * `sudo apt-get install python3-psycopg2`
@@ -51,7 +51,7 @@ DATABASES = {
 ```
 * `python3 manage.py migrate`
 
-# Set up the WebApp with apache #
+### Set up the WebApp with apache ###
 * `sudo apt-get install apache2`
 * `sudo apt-get install apache2-dev`
 * `sudo apt-get install libapache2-mod-wsgi-py3`
