@@ -76,4 +76,4 @@ Require all granted
 * Now you should be able to reach the Web-app at http://localhost/display (or http://your_IP_address/display).
 
 ## Optional: set up password log in ##
-If you want to add simple single user/password protection to your *Doberman WebApp* you can find instructions here https://github.com/plumdog/django-password-protect
+If you want to add simple single user/password protection to your *Doberman WebApp* you can follow for example these instructions here https://github.com/plumdog/django-password-protect
