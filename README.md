@@ -30,7 +30,7 @@ This installation guide assumes that you already fully completed the installatio
     * Download django-dbarray0.2 from [here](https://pypi.python.org/pypi/django-dbarray/0.2).
     * Extract file: `tar -xzvf file.tar.gz`.
     * Install django-dbarray: `sudo python3 setup.py install`.
-4. 
+4. Download *Doberman WebApp* to a directory: `git clone https://Doberman_slowcontrol@bitbucket.org/Doberman_slowcontrol/webapp.git`
 
 
 
