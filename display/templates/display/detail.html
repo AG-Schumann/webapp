@@ -27,6 +27,10 @@
 		<!-- save plot as csv -->
     	<li><a class="save_link" onclick="MakePlot()"><span>plot</span></a></li>
 		<li><a class="save_link" onclick="getCSVdata()"><span>Save as csv</span></a></li>
+		<!-- <li><font color="white">LINES  </font><div class="toggle-button"><button id="toggle" name="toggle" value="m"></button></div><font color="white">  MARKERS</font></li> -->
+
+		<li><font color="white">USE MARKERS  </font>   <input type="checkbox" id="toggle"> </li>
+
 		</ul>
     {% endblock %}<!-- end menu bar on left side -->
 
@@ -67,12 +71,20 @@
         <!----------- create the plot ----------->
         <script type="text/javascript">
         
-    
-
+/*
+		$(document).on('click', '.toggle-button', function() {
+			$(this).toggleClass('toggle-button-selected');
+			MakePlot();
+			console.log($(this).value);
+		});
+*/
 	    // get data and make plot
         function MakePlot(){
     	    var controllerdata = document.getElementById("dropdown1");
             var controllerdatavalue = controllerdata.options[controllerdata.selectedIndex].value;
+
+			var confirmvalue;
+	
             var range = document.getElementById('daterange').value;
 	        $.getJSON('{% url 'index' %}data/{{config.controller}}/'+controllerdatavalue+'/'+range,function(data){
                 console.log(data);
@@ -85,18 +97,41 @@
 		            dataY[i] = data[i][1];
 	            }
 	            if(data.length==0)alert("Can't plot empty data set");
-                //if(djangoData.length>50000)alert("selected number of data points is high. This might take some time");	
 
-                var plotdata = [
-                  {
+				if(document.getElementById('toggle').checked){
+					if(data.length>10000) {
+							if (confirm("You selected more than 10000 datapoints for plotting while checked 'USE MARKERS'.\nThis might slowdown your script significantly.\n\nDo you want to continue?") == true) {
+								confirmvalue = 1;
+							} else {
+								confirmvalue = 0;
+							}
+					}
+					else confirmvalue = 1;
+					if(confirmvalue==1){
+					    var plotdata = [
+					      {
 
-                    x: dataX,
-                    y: dataY,
-                    mode: 'markers',
-                    marker: { size: 3 },
-                    type: 'scatter',
-                  }
-                ];
+					        x: dataX,
+					        y: dataY,
+					        mode: 'markers',
+					        marker: { size: 3 },
+					        type: 'scatter',
+					      }
+					    ];
+					}
+				}
+				if(!document.getElementById('toggle').checked){
+		            var plotdata = [
+		              {
+
+		                x: dataX,
+		                y: dataY,
+		                mode: 'lines',
+		                type: 'scatter',
+		              }
+		            ];
+				}
+
                 var layout = {
                   title: '{{config.controller}}',
                   yaxis: {
@@ -108,7 +143,7 @@
                     }
                   }
                 };
-                Plotly.newPlot('plot1', plotdata, layout);	
+                if((document.getElementById('toggle').checked && confirmvalue==1) || !document.getElementById('toggle').checked)Plotly.newPlot('plot1', plotdata, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});	
 	        }); //end getJSON
         }
         
@@ -135,7 +170,7 @@
 	        
 	        }); //end getJSON
         }
-    
+
 	    
 	    
         </script>

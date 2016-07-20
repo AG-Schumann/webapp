@@ -34,8 +34,10 @@
 				<ul>
 					<li class='last'><a onclick="SetTimeRange(1);">Last hour</a></li>
 					<li class='last'><a onclick="SetTimeRange(2)">Last 5 hours</span></a></li>
+					<!--
 					<li class='last'><a onclick="SetTimeRange(3)">Last Day</a></li>
 					<li class='last'><a onclick="SetTimeRange(4)">Last Week</a></li>
+					-->
 				</ul>
 		   </li>
 		</ul>
@@ -115,27 +117,27 @@
 
 		    if(chart_number==1){
 			    linklist[0] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart1 = Plotly.newPlot('box1', data, layout);
+			    chart1 = Plotly.newPlot('box1', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
 		    }
 		    if(chart_number==2){
 			    linklist[1] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart2 = Plotly.newPlot('box2', data, layout);
+			    chart2 = Plotly.newPlot('box2', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
 		    }
 		    if(chart_number==3){
 			    linklist[2] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart3 = Plotly.newPlot('box3', data, layout);
+			    chart3 = Plotly.newPlot('box3', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
 		    }
 		    if(chart_number==4){
 			    linklist[3] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart4 = Plotly.newPlot('box4', data, layout);
+			    chart4 = Plotly.newPlot('box4', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
 		    }
 		    if(chart_number==5){
 			    linklist[4] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart5 = Plotly.newPlot('box5', data, layout);
+			    chart5 = Plotly.newPlot('box5', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
 		    }
 		    if(chart_number==6){
 			    linklist[5] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart6 = Plotly.newPlot('box6', data, layout);
+			    chart6 = Plotly.newPlot('box6', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
 		    }
 	    }); //end getJSON
     }
