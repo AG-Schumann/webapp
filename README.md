@@ -45,6 +45,7 @@ DATABASES = {
     }
 }
 ```
+* You should also add your host to the option **ALLOWED_HOSTS = ['yourhost.com']**. (if you run the app only locally this could be 'localhost', see also the [documentation here](https://docs.djangoproject.com/en/1.9/ref/settings/#allowed-hosts)).
 * After you modified the setup.py file run `python3 manage.py migrate`
 
 ### Set up the WebApp with apache ###
