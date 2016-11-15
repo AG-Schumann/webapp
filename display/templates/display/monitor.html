@@ -185,8 +185,6 @@ range: [(min-(0.005*min)), (max+(0.005*max))]
                 },
                 ]
 
-
-
             };
 
 		    if(chart_number==1){
@@ -272,34 +270,49 @@ range: [(min-(0.005*min)), (max+(0.005*max))]
 			    // dygraph wants time to be defined as "Date"
 	            var dataX = new Array(data.length);
         	    var dataY = new Array(data.length);
-			    for(var i = 0; i < data.length-3; i++){//lats entry is status of data point
-			        dataX[i] = new Date(data[i][0]);
-        		    dataY[i] = data[i][1];
-			    }
-			    
+                var max = -999999999999999999999999999;
+                var min = 999999999999999999999999999;
+
+		        for(var i = 0; i < data.length-3; i++){
+		            dataX[i] = new Date(data[i][0]);
+		            dataY[i] = data[i][1];
+                    if (dataY[i] < min){
+                        min = dataY[i];
+                    }
+                    if (dataY[i] > max){
+                        max = dataY[i];
+                    }
+                }
+
 			   	// Update the charts with new data
 			    if(plotnumber == 1){
                     box1.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
+                    box1.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
 			        Plotly.redraw('box1');	
 			    }			    
   			    if(plotnumber == 2){
                     box2.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
+                    box2.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
 			        Plotly.redraw('box2');	
 			    }
 			    if(plotnumber == 3){
                     box3.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
+                    box3.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
 			        Plotly.redraw('box3');	
 			    }
 			    if(plotnumber == 4){
                     box4.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
+                    box4.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
 			        Plotly.redraw('box4');	
 			    }
 			    if(plotnumber == 5){
                     box5.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
+                    box5.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
 			        Plotly.redraw('box5');	
 			    }			
 			    if(plotnumber == 6){
                     box6.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
+                    box6.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
 			        Plotly.redraw('box6');	
 			    }
 		    }); //end getJSON
