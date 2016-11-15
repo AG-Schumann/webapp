@@ -90,6 +90,45 @@ def getCVSdata(request, controller, select, t1, t2, t3, t4, t5):
 
     return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='display/detail/json')
 
+def getRealdata(request, controller, select, t1, t2, t3, t4, t5): 
+
+    if request.method == 'GET':
+        data = controller+'/'+select+'/'+t1+'/'+t2+'/'+t3+'/'+t4+'/'+t5
+        
+        # get information about controller
+        config = get_object_or_404(Config, pk=controller)
+        counter = 0
+        #select data to plot
+        for data in config.description:
+            if data == select:
+                data_select = counter
+            counter = counter+1
+            
+    	#define DB table to look for the data
+        db_table = 'data_' + controller
+        DataClass = getModel(db_table.lower()) #use lower case of 'db_table'
+
+        time_start_string = t1+'/'+t2+'/'+t3[:13]
+        time_start = datetime.datetime.strptime(time_start_string, "%m/%d/%Y %I:%M %p")
+        time_end_string = t3[16:]+'/'+t4+'/'+t5
+        time_end = datetime.datetime.strptime(time_end_string, "%m/%d/%Y %I:%M %p")
+
+	# search for data using time range
+        complete_list = DataClass.objects.filter(datetime__range=[time_start,time_end])
+	# extract data points
+        datepoint = [datetime.datetime.strftime(DataClass.datetime,"%Y/%m/%d %H:%M:%S") for DataClass in complete_list] #format datetime
+	# extract time points
+        datapoint = [DataClass.data[data_select] for DataClass in complete_list]
+        # extract status of datapoint
+        status = [DataClass.status[data_select] for DataClass in complete_list]
+	# put data into list of the form [[data1, time1], [data2, time2], ...]
+        data = []
+        for i in range(0, len(datepoint)): #len(datepoint)
+            data.append([datepoint[i], datapoint[i] ])
+        data.append([config.warning_low[data_select], config.warning_high[data_select], 0])
+        data.append([config.alarm_low[data_select], config.alarm_high[data_select], 0])
+
+    return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='display/detail/json')
 
 # call monitor page of WebApp: 
 #contains 4 scopes to monitor any data available (self updating)
@@ -163,6 +202,8 @@ def scopedraw(request, controller, select, timerange, plotnumber):
             data.append([datepoint[i], datapoint[i], status[i] ])
             #print(datepoint[i])
         data.append([config.warning_low[data_select], config.warning_high[data_select], 0])
+        data.append([config.alarm_low[data_select], config.alarm_high[data_select], 0])
+
 
         
 

@@ -86,16 +86,34 @@
 			var confirmvalue;
 	
             var range = document.getElementById('daterange').value;
-	        $.getJSON('{% url 'index' %}data/{{config.controller}}/'+controllerdatavalue+'/'+range,function(data){
-                console.log(data);
+            
+	        $.getJSON('{% url 'index' %}pdata/{{config.controller}}/'+controllerdatavalue+'/'+range,function(data){
 
                 // prepare data for plot
 	            var dataX = new Array(data.length);
 	            var dataY = new Array(data.length);
-	            for(var i = 0; i < data.length; i++){
+                var max = -999999999999999999999999999;
+                var min = 999999999999999999999999999;
+	            for(var i = 0; i < data.length-3; i++){
 		            dataX[i] = new Date(data[i][0]);
 		            dataY[i] = data[i][1];
+                    if (dataY[i] < min){
+                        min = dataY[i];
+                    }
+                    if (dataY[i] > max){
+                        max = dataY[i];
+                    }
+
 	            }
+                //last entries are warning levels
+		        var warning_low = data[data.length-2][0];
+		        var warning_high = data[data.length-2][1];
+		        var alarm_low = data[data.length-1][0];
+		        var alarm_high = data[data.length-1][1];
+
+                var maxdisp = max+(10*max);
+                var mindisp = min-(10*min);
+
 	            if(data.length==0)alert("Can't plot empty data set");
 
 				if(document.getElementById('toggle').checked){
@@ -133,6 +151,139 @@
 				}
 
                 var layout = {
+                        margin: {
+                            l: 50,
+                            r: 0,
+                            b: 35,
+                            t: 25,
+                            pad: -10
+                         },
+                        shapes: [
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: alarm_high,
+                      x1: 1,
+                      y1: alarm_high,
+                      line: {
+                        color: 'rgb(255, 0, 0)',
+                        width: 1,
+                        },
+                },
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: alarm_low,
+                      x1: 1,
+                      y1: alarm_low,
+                      line: {
+                        color: 'rgb(255, 0, 0)',
+                        width: 1,
+                        },
+                },
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: warning_low,
+                      x1: 1,
+                      y1: warning_low,
+                      line: {
+                        color: 'rgb(255, 255, 50)',
+                        width: 2,
+                        },
+                },
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: warning_high,
+                      x1: 1,
+                      y1: warning_high,
+                      line: {
+                        color: 'rgb(255, 255, 50)',
+                        width: 2,
+                        },
+                },
+
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: alarm_high,
+            x1: 1,
+            y1: maxdisp,
+            opacity: 0.2,
+            line: {
+                width: 0
+            },
+            fillcolor: 'rgb(255, 0, 0)',
+        },
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: warning_high,
+            x1: 1,
+            y1: alarm_high,
+            opacity: 0.2,
+            line: {
+                width: 0
+            },
+            fillcolor: 'rgb(255, 255, 0)',
+        },
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: warning_low,
+            x1: 1,
+            y1: warning_high,
+            opacity: 0.2,
+            line: {
+                width: 0
+            },
+            fillcolor: 'rgb(50, 171, 96)',
+        },
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: alarm_low,
+            x1: 1,
+            y1: warning_low,
+            opacity: 0.2,
+            line: {
+                width: 0
+            },
+            fillcolor: 'rgb(255, 255, 0)',
+        },
+        {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            y0: mindisp,
+            x1: 1,
+            y1: alarm_low,
+            opacity: 0.2,
+            line: {
+                width: 0
+            },
+            fillcolor: 'rgb(255, 0, 0)',
+        },
+        ],
+
                   title: '{{config.controller}}',
                   yaxis: {
                     title: controllerdatavalue,

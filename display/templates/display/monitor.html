@@ -101,18 +101,92 @@
 	        var dataX = new Array(data.length);
 	        var dataY = new Array(data.length);
 
-		    for(var i = 0; i < data.length-1; i++){
+            var max = -999999999999999999999999999;
+            var min = 999999999999999999999999999;
+            
+		    for(var i = 0; i < data.length-3; i++){
 		        dataX[i] = new Date(data[i][0]);
 		        dataY[i] = data[i][1];
+                if (dataY[i] < min){
+                        min = dataY[i];
+                    }
+                if (dataY[i] > max){
+                        max = dataY[i];
+                    }
 		    }
 		    //last entries are warning levels
-		    var warning_low = data[data.length-1][0];
-		    var warning_high = data[data.length-1][1];
-
+		    var warning_low = data[data.length-2][0];
+		    var warning_high = data[data.length-2][1];
+		    var alarm_low = data[data.length-1][0];
+		    var alarm_high = data[data.length-1][1];
+            var maxdisp = max+(10*max);
+            var mindisp = min-(10*min);
             // prepare plot.ly plot
             var data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
             var layout = {
-              title: link
+              title: link,
+                    yaxis: {
+range: [(min-(0.005*min)), (max+(0.005*max))]
+                    },
+                    //xaxis: {range: [dataX[0],dataX[data.length-4]],},
+
+                     shapes: [
+                            {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: alarm_high,
+                      x1: 1,
+                      y1: alarm_high,
+                      line: {
+                        color: 'rgb(255, 0, 0)',
+                        width: 1,
+                        },
+                },
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: alarm_low,
+                      x1: 1,
+                      y1: alarm_low,
+                      line: {
+                        color: 'rgb(255, 0, 0)',
+                        width: 1,
+                        },
+                },
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: warning_low,
+                      x1: 1,
+                      y1: warning_low,
+                      line: {
+                        color: 'rgb(255, 255, 50)',
+                        width: 2,
+                        },
+                },
+                {
+                      type: 'line',
+                      xref: 'paper',
+                      yref: 'y',
+                      x0: 0,
+                      y0: warning_high,
+                      x1: 1,
+                      y1: warning_high,
+                      line: {
+                        color: 'rgb(255, 255, 50)',
+                        width: 2,
+                        },
+                },
+                ]
+
+
+
             };
 
 		    if(chart_number==1){
@@ -198,7 +272,7 @@
 			    // dygraph wants time to be defined as "Date"
 	            var dataX = new Array(data.length);
         	    var dataY = new Array(data.length);
-			    for(var i = 0; i < data.length-1; i++){//lats entry is status of data point
+			    for(var i = 0; i < data.length-3; i++){//lats entry is status of data point
 			        dataX[i] = new Date(data[i][0]);
         		    dataY[i] = data[i][1];
 			    }
