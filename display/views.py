@@ -8,7 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 import dbarray
-from .models import Config, DataPressurecontroller, getModel
+from .models import Controller, getDataModel
 from .forms import NameForm
 import datetime
 import sys
@@ -18,10 +18,10 @@ import sys
 #-------------------------
 def index(request):
     request.session['link'] = 'TestLink'
-    Config_list = Config.objects.all()
+    Controller_list = Controller.objects.all()
     template = loader.get_template('display/index.html')
     context = RequestContext(request, {
-        'Config_list': Config_list,
+        'Controller_list': Controller_list,
     })
     return HttpResponse(template.render(context))
 
@@ -29,108 +29,61 @@ def index(request):
 # page to show some details of an available controller
 # on this page you can select any time to plot (not self updating)
 #-----------------------------------------------------
-def detail(request, config_controller):
+def detail(request, controller_name):
     #check available controllers
-    Config_list = Config.objects.all()
+    Controller_list = Controller.objects.all()
 
     # collect data for info table
-    config = get_object_or_404(Config, pk=config_controller)
+    controller = get_object_or_404(Config, pk=config_controller)
 
     # initialize the datetime range (default is last day)
-    time_start = datetime.datetime.now()+datetime.timedelta(seconds=7200)-datetime.timedelta(seconds=86400)
-    time_end = datetime.datetime.now()+datetime.timedelta(seconds=7200)
+    time_start = datetime.datetime.now()-datetime.timedelta(hours=24)
+    time_end = datetime.datetime.now()
     # this strings are needed for the input text field int he template
-    time_start_string = time_start.strftime('%m/%d/%Y %I:%M %p')
-    time_end_string = time_end.strftime('%m/%d/%Y %I:%M %p')
+    time_start_str = time_start.strftime('%Y-%m-%d_%H:%M')
+    time_end_str = time_end.strftime('%Y-%m-%d_%H:%M')
 
-    DataNames = ["" for x in range(0, config.number_of_data)] #list containing the name of data in the data array
-    for x in range(0, config.number_of_data):
-        DataNames[x] = config.description[x]
+    DataNames = [x for x in controller.description]
 
-
-    return render(request, 'display/detail.html', {'time_start_string': time_start_string, 'time_end_string':time_end_string, 'Config_list': Config_list,'config': config, 'DataNames': DataNames})
+    return render(request, 'display/detail.html',
+            {'time_start_string': time_start_str,
+                'time_end_string':time_end_str,
+                'Controller_list': Controller_list,
+                'controller': controller,
+                'DataNames': DataNames})
 
 
 #---------------------------------------------------------------
-def getCVSdata(request, controller, select, t1, t2, t3, t4, t5): 
+def getData(request, controller_name, desc, time_start_str, time_end_str):
 
     if request.method == 'GET':
-        data = controller+'/'+select+'/'+t1+'/'+t2+'/'+t3+'/'+t4+'/'+t5
-        
         # get information about controller
-        config = get_object_or_404(Config, pk=controller)
-        counter = 0
-        #select data to plot
-        for data in config.description:
-            if data == select:
-                data_select = counter
-            counter = counter+1
-            
-    	#define DB table to look for the data
-        db_table = 'data_' + controller
-        DataClass = getModel(db_table.lower()) #use lower case of 'db_table'
+        controller = get_object_or_404(Controller, pk=controller_name)
+        data_i = list(controller.description).index(desc)
 
-        time_start_string = t1+'/'+t2+'/'+t3[:13]
-        time_start = datetime.datetime.strptime(time_start_string, "%m/%d/%Y %I:%M %p")
-        time_end_string = t3[16:]+'/'+t4+'/'+t5
-        time_end = datetime.datetime.strptime(time_end_string, "%m/%d/%Y %I:%M %p")
+        #define DB table to look for the data
+        DataClass = getDataModel(controller_name)
 
-	# search for data using time range
-        complete_list = DataClass.objects.filter(datetime__range=[time_start,time_end])
-	# extract data points
-        datepoint = [datetime.datetime.strftime(DataClass.datetime,"%Y/%m/%d %H:%M:%S") for DataClass in complete_list] #format datetime
-	# extract time points
-        datapoint = [DataClass.data[data_select] for DataClass in complete_list]
+        time_start = datetime.datetime.strptime(time_start_str, '%Y-%m-%d_%H:%M')
+        time_end = datetime.datetime.strptime(time_end_str, '%Y-%m-%d_%H:%M')
+
+        # search for data using time range
+        complete_list = DataClass.objects.filter(when__range=[time_start,time_end])
+        # extract data points
+        dates = map(lambda x : x.when.isoformat(sep=' '), complete_list)
+        # extract time points
+        datapoints = map(lambda x : x.data[data_i], complete_list)
         # extract status of datapoint
-        status = [DataClass.status[data_select] for DataClass in complete_list]
-	# put data into list of the form [[data1, time1], [data2, time2], ...]
-        data = []
-        for i in range(0, len(datepoint)): #len(datepoint)
-            data.append([datepoint[i], datapoint[i] ])
+        status = map(lambda x : x.status[data_i], complete_list)
+
+        # put data into list of the form [[data1, time1, status1], ...]
+        data = list(zip(dates, datapoints, status))
+        data.append([controller.warning_low[data_i], controller.warning_high[data_i], 0])
+        data.append([controller.alarm_low[data_i], controller.alarm_high[data_i], 0])
 
     return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='display/detail/json')
 
-def getRealdata(request, controller, select, t1, t2, t3, t4, t5): 
-
-    if request.method == 'GET':
-        data = controller+'/'+select+'/'+t1+'/'+t2+'/'+t3+'/'+t4+'/'+t5
-        
-        # get information about controller
-        config = get_object_or_404(Config, pk=controller)
-        counter = 0
-        #select data to plot
-        for data in config.description:
-            if data == select:
-                data_select = counter
-            counter = counter+1
-            
-    	#define DB table to look for the data
-        db_table = 'data_' + controller
-        DataClass = getModel(db_table.lower()) #use lower case of 'db_table'
-
-        time_start_string = t1+'/'+t2+'/'+t3[:13]
-        time_start = datetime.datetime.strptime(time_start_string, "%m/%d/%Y %I:%M %p")
-        time_end_string = t3[16:]+'/'+t4+'/'+t5
-        time_end = datetime.datetime.strptime(time_end_string, "%m/%d/%Y %I:%M %p")
-
-	# search for data using time range
-        complete_list = DataClass.objects.filter(datetime__range=[time_start,time_end])
-	# extract data points
-        datepoint = [datetime.datetime.strftime(DataClass.datetime,"%Y/%m/%d %H:%M:%S") for DataClass in complete_list] #format datetime
-	# extract time points
-        datapoint = [DataClass.data[data_select] for DataClass in complete_list]
-        # extract status of datapoint
-        status = [DataClass.status[data_select] for DataClass in complete_list]
-	# put data into list of the form [[data1, time1], [data2, time2], ...]
-        data = []
-        for i in range(0, len(datepoint)): #len(datepoint)
-            data.append([datepoint[i], datapoint[i] ])
-        data.append([config.warning_low[data_select], config.warning_high[data_select], 0])
-        data.append([config.alarm_low[data_select], config.alarm_high[data_select], 0])
-
-    return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='display/detail/json')
-
-# call monitor page of WebApp: 
+# call monitor page of WebApp:
 #contains 4 scopes to monitor any data available (self updating)
 #---------------------------------------------------------------
 def monitor(request):
@@ -141,71 +94,51 @@ def monitor(request):
 
     #request.session['PlotLinks'] = ['','','','','','']
     PlotLinks = request.session['PlotLinks']
-    print(PlotLinks)
+    #print(PlotLinks)
 
-    Config_list = Config.objects.all()
-    return render(request, 'display/monitor.html', {'Config_list': Config_list, 'PlotLinks': PlotLinks })
+    Controller_list = Controller.objects.all()
+    return render(request, 'display/monitor.html', {'Controller_list': Controller_list, 'PlotLinks': PlotLinks })
 
 
 # this function gets the required data for the monitor
 #---------------------------------------------------------------
-def scopedraw(request, controller, select, timerange, plotnumber): 
+def scopedraw(request, controller_name, desc, timerange, plotnumber):
 
     if request.method == 'GET':
 
         # update PlotLinks in session
         PlotLinks = request.session['PlotLinks']
-        PlotLinks[int(plotnumber)-1] = controller + '/' + select
+        PlotLinks[int(plotnumber)-1] = controller_name + '/' + desc
         request.session['PlotLinks'] = PlotLinks
 
-        
-
         # get information about controller
-        config = get_object_or_404(Config, pk=controller)
-        counter = 0
+        controller = get_object_or_404(Controller, pk=controller_name)
         #select data to plot
-        for data in config.description:
-            if data == select:
-                data_select = counter
-            counter = counter+1
+        data_i = list(controller.description).index(desc)
 
-	#define DB table to look for the data
-        db_table = 'data_' + controller
-        DataClass = getModel(db_table.lower()) #use lower case of 'db_table'
+        #define DB table to look for the data
+        DataClass = getDataModel(controller_name)
         # set the datetime range
-	# last hour
-        if timerange == '1':
-            time_start = datetime.datetime.now()-datetime.timedelta(seconds=3600)
-	# last 5 hours
-        if timerange == '2':
-            time_start = datetime.datetime.now()-datetime.timedelta(seconds=18000)
-	# last day
-        if timerange == '3':
-            time_start = datetime.datetime.now()-datetime.timedelta(seconds=86400)
-	# last week
-        if timerange == '4':
-            time_start = datetime.datetime.now()-datetime.timedelta(seconds=604800)
         time_end = datetime.datetime.now()
+        tr = {'1' : datetime.timedelta(hours=1),
+              '2' : datetime.timedelta(hours=5),
+              '3' : datetime.timedelta(hours=24),
+              '4' : datetime.timedelta(weeks=1)}
+        time_start = time_end - tr[timerange]
 
-	# search for data using time range
-        complete_list = DataClass.objects.filter(datetime__range=[time_start,time_end])
-	# extract data points
-        datepoint = [datetime.datetime.strftime(DataClass.datetime,"%Y/%m/%d %H:%M:%S") for DataClass in complete_list] #format datetime
-	# extract time points
-        datapoint = [DataClass.data[data_select] for DataClass in complete_list]
+        # search for data using time range
+        complete_list = DataClass.objects.filter(when__range=[time_start,time_end])
+        # extract data points
+        dates = map(lambda x : x.when.isoformat(sep=' '), complete_list)
+        # extract time points
+        datapoints = map(lambda x : x.data[data_i], complete_list)
         # extract status of datapoint
-        status = [DataClass.status[data_select] for DataClass in complete_list]
-	# put data into list of the form [[data1, time1], [data2, time2], ...]
-        data = []
-        print(len(datepoint))
-        for i in range(0, len(datepoint)): #len(datepoint)
-            data.append([datepoint[i], datapoint[i], status[i] ])
-            #print(datepoint[i])
-        data.append([config.warning_low[data_select], config.warning_high[data_select], 0])
-        data.append([config.alarm_low[data_select], config.alarm_high[data_select], 0])
+        status = map(lambda x : x.status[data_i], complete_list)
 
-
-        
+        # put data into list of the form [[data1, time1, status1], ...]
+        data = list(zip(dates, datapoints, status))
+        data.append([controller.warning_low[data_i], controller.warning_high[data_i], 0])
+        data.append([controller.alarm_low[data_i], controller.alarm_high[data_i], 0])
 
     # Here the data is dumped as JSON to the frontend
     return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='display/monitor/json')

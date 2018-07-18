@@ -1,102 +1,101 @@
 {% extends "display/base.html" %}
 
     <!-- header bar with title -->
-    {% block subtitle %}{{config.controller}}{% endblock %}
+    {% block subtitle %}{{controller.name}}{% endblock %}
 
-	{% block sidebar %}
-		<div class="box2" ></div>
+    {% block sidebar %}
+        <div class="box2" ></div>
 
-		<ul>
+        <ul>
 
-		<!-- selection of data and timerange -->
-			<form >
-			 <li><div class="styles"><font color="white">Select Data:</font>
-				<select width="15px" id="dropdown1" name="dropdown1">
-				{% for DataName in DataNames %}
-						<option value="{{ DataName }}">{{ DataName }}</option> 
-				{% endfor %}
-				</select>
-			</div></li>
-			<li><div class="styles"><font color="white">Select Time Range:</font>
-				<input type="text" size="15" id="daterange" name="daterange" value="{{time_start_string}} - {{time_end_string}}"></input>
-			</div></li>
-			</form>
-		<!-- end selection of data and timerange -->
+        <!-- selection of data and timerange -->
+            <form >
+             <li><div class="styles"><font color="white">Select Data:</font>
+                <select width="15px" id="dropdown1" name="dropdown1">
+                {% for DataName in DataNames %}
+                        <option value="{{ DataName }}">{{ DataName }}</option>
+                {% endfor %}
+                </select>
+            </div></li>
+            <li><div class="styles"><font color="white">Select Time Range:</font>
+                <input type="text" size="15" id="daterange" name="daterange" value="{{time_start_string}} - {{time_end_string}}"></input>
+            </div></li>
+            </form>
+        <!-- end selection of data and timerange -->
 
 
-		<!-- save plot as csv -->
-    	<li><a class="save_link" onclick="MakePlot()"><span>plot</span></a></li>
-		<li><a class="save_link" onclick="getCSVdata()"><span>Save as csv</span></a></li>
-		<!-- <li><font color="white">LINES  </font><div class="toggle-button"><button id="toggle" name="toggle" value="m"></button></div><font color="white">  MARKERS</font></li> -->
+        <!-- save plot as csv -->
+        <li><a class="save_link" onclick="MakePlot()"><span>plot</span></a></li>
+        <li><a class="save_link" onclick="getCSVdata()"><span>Save as csv</span></a></li>
+        <!-- <li><font color="white">LINES  </font><div class="toggle-button"><button id="toggle" name="toggle" value="m"></button></div><font color="white">  MARKERS</font></li> -->
 
-		<li><font color="white">USE MARKERS  </font>   <input type="checkbox" id="toggle"> </li>
+        <li><font color="white">USE MARKERS  </font>   <input type="checkbox" id="toggle"> </li>
 
-		</ul>
+        </ul>
     {% endblock %}<!-- end menu bar on left side -->
 
 
-	<!-- main section -->
+    <!-- main section -->
     {% block content %}
-    
-        <!-- Table showing controller status/properties --> 
-		<div  id='overview_table' style="margin-right:10px; margin-left:0">
-		 <table border="1" style="width:100%">
-		  <tr>
-                {% for name, value in config.get_fields %}
+
+        <!-- Table showing controller status/properties -->
+        <div  id='overview_table' style="margin-right:10px; margin-left:0">
+         <table border="1" style="width:100%">
+          <tr>
+                {% for name, value in controller.get_fields %}
                     {% if value %}
                       <td>{{ name }}</td>
                     {% endif %}
                 {% endfor %}
-		  </tr>
-		  <tr>
-                {% for name, value in config.get_fields %}
+          </tr>
+          <tr>
+                {% for name, value in controller.get_fields %}
                     {% if value %}
                       <td>{{ value }}</td>
                     {% endif %}
-                {% endfor %}		  
-		  </tr>
-		</table> 
-		</div>
-        <!-- end of Table --> 
+                {% endfor %}
+          </tr>
+        </table>
+        </div>
+        <!-- end of Table -->
 
-       
 
-        <!-- create container for plot --> 
-		<p><div id="plot1" style="display: inline-block; width: 85%; height: 48%; margin: 0.5em; box-shadow: 0px 0px 5px #888888;"></div></p> 
-		
+        <!-- create container for plot -->
+        <p><div id="plot1" style="display: inline-block; width: 85%; height: 48%; margin: 0.5em; box-shadow: 0px 0px 5px #888888;"></div></p>
+
 
     {% endblock %}
 
-	{% block javascript %}
+    {% block javascript %}
         <!----------- create the plot ----------->
         <script type="text/javascript">
-        
+
 /*
-		$(document).on('click', '.toggle-button', function() {
-			$(this).toggleClass('toggle-button-selected');
-			MakePlot();
-			console.log($(this).value);
-		});
+        $(document).on('click', '.toggle-button', function() {
+            $(this).toggleClass('toggle-button-selected');
+            MakePlot();
+            console.log($(this).value);
+        });
 */
-	    // get data and make plot
+        // get data and make plot
         function MakePlot(){
-    	    var controllerdata = document.getElementById("dropdown1");
+            var controllerdata = document.getElementById("dropdown1");
             var controllerdatavalue = controllerdata.options[controllerdata.selectedIndex].value;
 
-			var confirmvalue;
-	
+            var confirmvalue;
+
             var range = document.getElementById('daterange').value;
-            
-	        $.getJSON('{% url 'index' %}pdata/{{config.controller}}/'+controllerdatavalue+'/'+range,function(data){
+
+            $.getJSON('{% url 'index' %}data/{{controller.name}}/'+controllerdatavalue+'/'+range,function(data){
 
                 // prepare data for plot
-	            var dataX = new Array(data.length);
-	            var dataY = new Array(data.length);
+                var dataX = new Array(data.length);
+                var dataY = new Array(data.length);
                 var max = -999999999999999999999999999;
                 var min = 999999999999999999999999999;
-	            for(var i = 0; i < data.length-3; i++){
-		            dataX[i] = new Date(data[i][0]);
-		            dataY[i] = data[i][1];
+                for(var i = 0; i < data.length-3; i++){
+                    dataX[i] = new Date(data[i][0]);
+                    dataY[i] = data[i][1];
                     if (dataY[i] < min){
                         min = dataY[i];
                     }
@@ -104,51 +103,51 @@
                         max = dataY[i];
                     }
 
-	            }
+                }
                 //last entries are warning levels
-		        var warning_low = data[data.length-2][0];
-		        var warning_high = data[data.length-2][1];
-		        var alarm_low = data[data.length-1][0];
-		        var alarm_high = data[data.length-1][1];
+                var warning_low = data[data.length-2][0];
+                var warning_high = data[data.length-2][1];
+                var alarm_low = data[data.length-1][0];
+                var alarm_high = data[data.length-1][1];
 
                 var maxdisp = max+(10*max);
                 var mindisp = min-(10*min);
 
-	            if(data.length==0)alert("Can't plot empty data set");
+                if(data.length==0)alert("Can't plot empty data set");
 
-				if(document.getElementById('toggle').checked){
-					if(data.length>10000) {
-							if (confirm("You selected more than 10000 datapoints for plotting while checked 'USE MARKERS'.\nThis might slowdown your script significantly.\n\nDo you want to continue?") == true) {
-								confirmvalue = 1;
-							} else {
-								confirmvalue = 0;
-							}
-					}
-					else confirmvalue = 1;
-					if(confirmvalue==1){
-					    var plotdata = [
-					      {
+                if(document.getElementById('toggle').checked){
+                    if(data.length>10000) {
+                            if (confirm("You selected more than 10000 datapoints for plotting while checked 'USE MARKERS'.\nThis might slowdown your script significantly.\n\nDo you want to continue?") == true) {
+                                confirmvalue = 1;
+                            } else {
+                                confirmvalue = 0;
+                            }
+                    }
+                    else confirmvalue = 1;
+                    if(confirmvalue==1){
+                        var plotdata = [
+                          {
 
-					        x: dataX,
-					        y: dataY,
-					        mode: 'markers',
-					        marker: { size: 3 },
-					        type: 'scatter',
-					      }
-					    ];
-					}
-				}
-				if(!document.getElementById('toggle').checked){
-		            var plotdata = [
-		              {
+                            x: dataX,
+                            y: dataY,
+                            mode: 'markers',
+                            marker: { size: 3 },
+                            type: 'scatter',
+                          }
+                        ];
+                    }
+                }
+                if(!document.getElementById('toggle').checked){
+                    var plotdata = [
+                      {
 
-		                x: dataX,
-		                y: dataY,
-		                mode: 'lines',
-		                type: 'scatter',
-		              }
-		            ];
-				}
+                        x: dataX,
+                        y: dataY,
+                        mode: 'lines',
+                        type: 'scatter',
+                      }
+                    ];
+                }
 
                 var layout = {
                         margin: {
@@ -284,9 +283,9 @@
         },
         ],
 
-                  title: '{{config.controller}}',
+                  title: '{{controller.name}}',
                   yaxis: {
-                    range: [(min-(0.005*min)), (max+(0.005*max))],
+                    range: [0.995*min, 1.005*max],
                     title: controllerdatavalue,
                     titlefont: {
                       family: 'Courier New, monospace',
@@ -295,36 +294,36 @@
                     }
                   }
                 };
-                if((document.getElementById('toggle').checked && confirmvalue==1) || !document.getElementById('toggle').checked)Plotly.newPlot('plot1', plotdata, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});	
-	        }); //end getJSON
-        }
-        
-        
-	    
-	    // get data and save to csv file
-        function getCSVdata(graph){
-    	    var controllerdata = document.getElementById("dropdown1");
-            var controllerdatavalue = controllerdata.options[controllerdata.selectedIndex].value;
-            var range = document.getElementById('daterange').value;
-	        $.getJSON('{% url 'index' %}data/{{config.controller}}/'+controllerdatavalue+'/'+range,function(data){
- 
-     	        var dateCSV = new Array(data.length);
-	            for(var i = 0; i < data.length; i++){
-		            dateCSV[i] = [data[i][0].substring(0, 10),data[i][0].substring(11, 19), data[i][1] ];
-	            }
-	            var csvString = dateCSV.join("%0A");
-	            var a         = document.createElement('a');
-	            a.href        = 'data:attachment/csv,' + csvString;
-	            a.target      = '_blank';
-	            a.download    = 'myFile.csv';
-	            document.body.appendChild(a);
-	            a.click();
-	        
-	        }); //end getJSON
+                if((document.getElementById('toggle').checked && confirmvalue==1) || !document.getElementById('toggle').checked)Plotly.newPlot('plot1', plotdata, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }); //end getJSON
         }
 
-	    
-	    
+
+
+        // get data and save to csv file
+        function getCSVdata(graph){
+            var controllerdata = document.getElementById("dropdown1");
+            var controllerdatavalue = controllerdata.options[controllerdata.selectedIndex].value;
+            var range = document.getElementById('daterange').value;
+            $.getJSON('{% url 'index' %}data/{{controller.name}}/'+controllerdatavalue+'/'+range,function(data){
+
+                 var dateCSV = new Array(data.length);
+                for(var i = 0; i < data.length; i++){
+                    dateCSV[i] = [data[i][0], data[i][1], data[i][2]];
+                }
+                var csvString = dateCSV.join("%0A");
+                var a         = document.createElement('a');
+                a.href        = 'data:attachment/csv,' + csvString;
+                a.target      = '_blank';
+                a.download    = 'data.csv';
+                document.body.appendChild(a);
+                a.click();
+
+            }); //end getJSON
+        }
+
+
+
         </script>
     {% endblock %}
 

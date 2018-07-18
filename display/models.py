@@ -44,7 +44,7 @@ class Config(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'config'
+        db_table = 'controllers'
 
 
 class ConfigHistory(models.Model):
@@ -73,11 +73,12 @@ def getModel(db_table_var):
         datetime = models.DateTimeField(blank=True, null=False, primary_key=True)
         #data = models.FloatField(blank=True, null=True)  # This field type is a guess.
         data = dbarray.FloatArrayField()
-        status = models.TextField(blank=True, null=True)  # This field type is a guess.
+        status = models.FloatArrayField()  # This field type is a guess.
         class Meta:
             managed = False
             #db_table = 'data_pressurecontroller'
             db_table = db_table_var
+            db_collection = db_table_var
     return MyClass
 
 class DataSelection(models.Model):

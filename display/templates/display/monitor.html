@@ -3,75 +3,75 @@
 {% block subtitle %}monitor{% endblock %}
 
 {% block sidebar %}
-		<!-- create some space between main menu -->
-		<div class="box2" ></div>
+        <!-- create some space between main menu -->
+        <div class="box2" ></div>
 
-		<ul>
-		<!-- selection for the six plots -->	   
-		   {% for i in "123456" %}
+        <ul>
+        <!-- selection for the six plots -->
+           {% for i in "123456" %}
                 <li class='active has-sub'><a><span>Plot {{i}}</span></a>
                   <ul>
-	                {% if Config_list %}
-		                {% for config in Config_list %}
-			                <li class='active has-sub'><a><span>{{ config.controller }}</span></a>
-			                <ul>
-				                {% for data in config.description %}
-				                 <li class='last'><a onclick="DrawChart('{{ config.controller }}/{{data}}',{{i}})">{{data}}</a></li>
-				                {% endfor %}
-			                </ul>
-			                </li>
-		                {% endfor %}
-	                {% else %}
-		                <p>No controllers are available.</p>
-	                {% endif %}
+                    {% if Controller_list %}
+                        {% for controller in Controller_list %}
+                            <li class='active has-sub'><a><span>{{ controller.name }}</span></a>
+                            <ul>
+                                {% for desc in controller.description %}
+                                 <li class='last'><a onclick="DrawChart('{{ controller.name }}/{{desc}}',{{i}})">{{desc}}</a></li>
+                                {% endfor %}
+                            </ul>
+                            </li>
+                        {% endfor %}
+                    {% else %}
+                        <p>No controllers are available.</p>
+                    {% endif %}
                   </ul>
-                </li>                    
-		    {% endfor %}			   
-		   
-
-			<!-- time range selection -->
-		   <li class='active has-sub'><a><span>time range</span></a>
-				<ul>
-					<li class='last'><a onclick="SetTimeRange(1);">Last hour</a></li>
-					<li class='last'><a onclick="SetTimeRange(2)">Last 5 hours</span></a></li>
-					<!--
-					<li class='last'><a onclick="SetTimeRange(3)">Last Day</a></li>
-					<li class='last'><a onclick="SetTimeRange(4)">Last Week</a></li>
-					-->
-				</ul>
-		   </li>
-		</ul>
-	
-		<!-- some space between plot options/selection and save button -->
-		<div class="box3" ></div>
+                </li>
+            {% endfor %}
 
 
-		<!-- Save the plots as scv file -->
-		<ul>
-		   <li class='active has-sub'><a><span>Save as csv</span></a>
-			<ul>
-				<li class='last'><a onclick="if(typeof(chart1)=='undefined') alert('selected plot is empty');SavePlotCSV(1)">Plot1</a></li>
-				<li class='last'><a onclick="if(typeof(chart2)=='undefined') alert('selected plot is empty');SavePlotCSV(2)">Plot2</span></a></li>
-				<li class='last'><a onclick="if(typeof(chart3)=='undefined') alert('selected plot is empty');SavePlotCSV(3)">Plot3</a></li>
-				<li class='last'><a onclick="if(typeof(chart4)=='undefined') alert('selected plot is empty');SavePlotCSV(4)">Plot4</a></li>
-				<li class='last'><a onclick="if(typeof(chart5)=='undefined') alert('selected plot is empty');SavePlotCSV(5)">Plot5</a></li>
-				<li class='last'><a onclick="if(typeof(chart6)=='undefined') alert('selected plot is empty');SavePlotCSV(6)">Plot6</a></li>
-			</ul>
-		   </li>
-		</ul>
+            <!-- time range selection -->
+           <li class='active has-sub'><a><span>time range</span></a>
+                <ul>
+                    <li class='last'><a onclick="SetTimeRange(1);">Last hour</a></li>
+                    <li class='last'><a onclick="SetTimeRange(2)">Last 5 hours</span></a></li>
+                    <!--
+                    <li class='last'><a onclick="SetTimeRange(3)">Last Day</a></li>
+                    <li class='last'><a onclick="SetTimeRange(4)">Last Week</a></li>
+                    -->
+                </ul>
+           </li>
+        </ul>
 
-		</div>
+        <!-- some space between plot options/selection and save button -->
+        <div class="box3" ></div>
+
+
+        <!-- Save the plots as scv file -->
+        <ul>
+           <li class='active has-sub'><a><span>Save as csv</span></a>
+            <ul>
+                <li class='last'><a onclick="if(typeof(chart1)=='undefined') alert('selected plot is empty');SavePlotCSV(1)">Plot1</a></li>
+                <li class='last'><a onclick="if(typeof(chart2)=='undefined') alert('selected plot is empty');SavePlotCSV(2)">Plot2</span></a></li>
+                <li class='last'><a onclick="if(typeof(chart3)=='undefined') alert('selected plot is empty');SavePlotCSV(3)">Plot3</a></li>
+                <li class='last'><a onclick="if(typeof(chart4)=='undefined') alert('selected plot is empty');SavePlotCSV(4)">Plot4</a></li>
+                <li class='last'><a onclick="if(typeof(chart5)=='undefined') alert('selected plot is empty');SavePlotCSV(5)">Plot5</a></li>
+                <li class='last'><a onclick="if(typeof(chart6)=='undefined') alert('selected plot is empty');SavePlotCSV(6)">Plot6</a></li>
+            </ul>
+           </li>
+        </ul>
+
+        </div>
 {% endblock %}
 
 {% block content %}
-    <!-- prepare container for plot --> 
-	<div id="box1" class="box"></div>
-	<div id="box2" class="box"></div>
-	<div id="box3" class="box"></div>
-	<div id="box4" class="box"></div>
-	<div id="box5" class="box"></div>
-	<div id="box6" class="box"></div>
-    {{Config_list.iseries.warning_high.0}}
+    <!-- prepare container for plot -->
+    <div id="box1" class="box"></div>
+    <div id="box2" class="box"></div>
+    <div id="box3" class="box"></div>
+    <div id="box4" class="box"></div>
+    <div id="box5" class="box"></div>
+    <div id="box6" class="box"></div>
+    <!-- {{Config_list.iseries.warning_high.0}} -->
 {% endblock %}
 
 
@@ -90,35 +90,35 @@
     DrawChart(linklist[5],6);
 
     //draw the charts
-    // $.getJSON takes two arguments, a URL that points to the view and a callback function. 
+    // $.getJSON takes two arguments, a URL that points to the view and a callback function.
     //The callback is executed only if data is transferred from the URL
     function DrawChart(link,chart_number){
-	    $.getJSON(link + '/' + time_range + '/' + chart_number,function(data){
+        $.getJSON(link + '/' + time_range + '/' + chart_number,function(data){
 
-		    if(data.length==1)alert("Can't plot empty data set in plot " + chart_number);
+            if(data.length==1)alert("Can't plot empty data set in plot " + chart_number);
 
-		    //prepare data for dygraph
-	        var dataX = new Array(data.length);
-	        var dataY = new Array(data.length);
+            //prepare data for dygraph
+            var dataX = new Array(data.length);
+            var dataY = new Array(data.length);
 
             var max = -999999999999999999999999999;
             var min = 999999999999999999999999999;
-            
-		    for(var i = 0; i < data.length-3; i++){
-		        dataX[i] = new Date(data[i][0]);
-		        dataY[i] = data[i][1];
+
+            for(var i = 0; i < data.length-3; i++){
+                dataX[i] = new Date(data[i][0]);
+                dataY[i] = data[i][1];
                 if (dataY[i] < min){
                         min = dataY[i];
                     }
                 if (dataY[i] > max){
                         max = dataY[i];
                     }
-		    }
-		    //last entries are warning levels
-		    var warning_low = data[data.length-2][0];
-		    var warning_high = data[data.length-2][1];
-		    var alarm_low = data[data.length-1][0];
-		    var alarm_high = data[data.length-1][1];
+            }
+            //last entries are warning levels
+            var warning_low = data[data.length-2][0];
+            var warning_high = data[data.length-2][1];
+            var alarm_low = data[data.length-1][0];
+            var alarm_high = data[data.length-1][1];
             var maxdisp = max+(10*max);
             var mindisp = min-(10*min);
             // prepare plot.ly plot
@@ -126,7 +126,7 @@
             var layout = {
               title: link,
                     yaxis: {
-range: [(min-(0.005*min)), (max+(0.005*max))]
+                        range: [0.995*min, 1.005*max]
                     },
                     //xaxis: {range: [dataX[0],dataX[data.length-4]],},
 
@@ -187,69 +187,68 @@ range: [(min-(0.005*min)), (max+(0.005*max))]
 
             };
 
-		    if(chart_number==1){
-			    linklist[0] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart1 = Plotly.newPlot('box1', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
-		    }
-		    if(chart_number==2){
-			    linklist[1] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart2 = Plotly.newPlot('box2', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
-		    }
-		    if(chart_number==3){
-			    linklist[2] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart3 = Plotly.newPlot('box3', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
-		    }
-		    if(chart_number==4){
-			    linklist[3] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart4 = Plotly.newPlot('box4', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
-		    }
-		    if(chart_number==5){
-			    linklist[4] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart5 = Plotly.newPlot('box5', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
-		    }
-		    if(chart_number==6){
-			    linklist[5] = link; //update link in linklist (used for UpdatePlotX() )
-			    chart6 = Plotly.newPlot('box6', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
-		    }
-	    }); //end getJSON
+            if(chart_number==1){
+                linklist[0] = link; //update link in linklist (used for UpdatePlotX() )
+                chart1 = Plotly.newPlot('box1', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }
+            if(chart_number==2){
+                linklist[1] = link; //update link in linklist (used for UpdatePlotX() )
+                chart2 = Plotly.newPlot('box2', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }
+            if(chart_number==3){
+                linklist[2] = link; //update link in linklist (used for UpdatePlotX() )
+                chart3 = Plotly.newPlot('box3', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }
+            if(chart_number==4){
+                linklist[3] = link; //update link in linklist (used for UpdatePlotX() )
+                chart4 = Plotly.newPlot('box4', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }
+            if(chart_number==5){
+                linklist[4] = link; //update link in linklist (used for UpdatePlotX() )
+                chart5 = Plotly.newPlot('box5', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }
+            if(chart_number==6){
+                linklist[5] = link; //update link in linklist (used for UpdatePlotX() )
+                chart6 = Plotly.newPlot('box6', data, layout, {showLink: false, displaylogo: false, modeBarButtonsToRemove: ['sendDataToCloud','lasso2d','select2d']});
+            }
+        }); //end getJSON
     }
 
 
     // function to update the plots (if they exist)
-    function UpdatePlots(){   
-	    if(typeof(chart1) != 'undefined') UpdatePlotX(1);
-	    if(typeof(chart2) != 'undefined') UpdatePlotX(2);
-	    if(typeof(chart3) != 'undefined') UpdatePlotX(3);
-	    if(typeof(chart4) != 'undefined') UpdatePlotX(4);
-	    if(typeof(chart5) != 'undefined') UpdatePlotX(5);
-	    if(typeof(chart6) != 'undefined') UpdatePlotX(6);
-    } //end UpdatePlots 
-    
+    function UpdatePlots(){
+        if(typeof(chart1) != 'undefined') UpdatePlotX(1);
+        if(typeof(chart2) != 'undefined') UpdatePlotX(2);
+        if(typeof(chart3) != 'undefined') UpdatePlotX(3);
+        if(typeof(chart4) != 'undefined') UpdatePlotX(4);
+        if(typeof(chart5) != 'undefined') UpdatePlotX(5);
+        if(typeof(chart6) != 'undefined') UpdatePlotX(6);
+    } //end UpdatePlots
 
     // change the time range and force the existing plots to update
     function SetTimeRange(range){
-	    //change time range
-	    time_range = range;
-	    //update the plots
-	    UpdatePlots();
+        //change time range
+        time_range = range;
+        //update the plots
+        UpdatePlots();
     }
-    
+
     // This is an online oscilliscope so if we want it to constantly update we put a timeout callback to call the the UpdatePlots() function again
     function oscilliscope(){
-	    UpdatePlots();
-	    setTimeout(oscilliscope,10000);
+        UpdatePlots();
+        setTimeout(oscilliscope,10000);
     }
     // start updating when window loads
     window.onload = oscilliscope();
 
     // save the plots as csv file
     function SavePlotCSV(graph){
-	    $.getJSON(linklist[graph-1] + '/' + time_range + '/' + graph,function(data){
-		    //prepare data for dygraph
-		    var dateJ = new Array();
-		    for(var i = 0; i < data.length; i++){
-			    dateJ[i] = [data[i][0].substring(0, 10),data[i][0].substring(11, 19),data[i][1]];
-		    }
+        $.getJSON(linklist[graph-1] + '/' + time_range + '/' + graph,function(data){
+            //prepare data for dygraph
+            var dateJ = new Array();
+            for(var i = 0; i < data.length; i++){
+                dateJ[i] = [data[i][0].substring(0, 10),data[i][0].substring(11, 19),data[i][1]];
+            }
             var csvString = dateJ.join("%0A");
             var a         = document.createElement('a');
             a.href        = 'data:attachment/csv,' + csvString;
@@ -257,25 +256,25 @@ range: [(min-(0.005*min)), (max+(0.005*max))]
             a.download    = 'myFile.csv';
             document.body.appendChild(a);
             a.click();
-	    }); //end getJSON
+        }); //end getJSON
     }
 
 
     // $.getJSON takes two arguments, a URL that points to the view and a callback function. The callback
     // is executed only if data is transferred from the URL
-    function UpdatePlotX(plotnumber){   
+    function UpdatePlotX(plotnumber){
 //            console.log(plotnumber);
-		    $.getJSON(linklist[plotnumber-1] + '/' + time_range + '/'+plotnumber,function(data){
-			    //prepare data for dygraph
-			    // dygraph wants time to be defined as "Date"
-	            var dataX = new Array(data.length);
-        	    var dataY = new Array(data.length);
+            $.getJSON(linklist[plotnumber-1] + '/' + time_range + '/'+plotnumber,function(data){
+                //prepare data for dygraph
+                // dygraph wants time to be defined as "Date"
+                var dataX = new Array(data.length);
+                var dataY = new Array(data.length);
                 var max = -999999999999999999999999999;
                 var min = 999999999999999999999999999;
 
-		        for(var i = 0; i < data.length-3; i++){
-		            dataX[i] = new Date(data[i][0]);
-		            dataY[i] = data[i][1];
+                for(var i = 0; i < data.length-3; i++){
+                    dataX[i] = new Date(data[i][0]);
+                    dataY[i] = data[i][1];
                     if (dataY[i] < min){
                         min = dataY[i];
                     }
@@ -284,39 +283,39 @@ range: [(min-(0.005*min)), (max+(0.005*max))]
                     }
                 }
 
-			   	// Update the charts with new data
-			    if(plotnumber == 1){
+                   // Update the charts with new data
+                if(plotnumber == 1){
                     box1.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
-                    box1.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
-			        Plotly.redraw('box1');	
-			    }			    
-  			    if(plotnumber == 2){
+                    box1.layout.yaxis = {range: [0.995*min, 1.005*max]};
+                    Plotly.redraw('box1');
+                }
+                  if(plotnumber == 2){
                     box2.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
-                    box2.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
-			        Plotly.redraw('box2');	
-			    }
-			    if(plotnumber == 3){
+                    box2.layout.yaxis = {range: [0.995*min, 1.005*max]};
+                    Plotly.redraw('box2');
+                }
+                if(plotnumber == 3){
                     box3.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
-                    box3.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
-			        Plotly.redraw('box3');	
-			    }
-			    if(plotnumber == 4){
+                    box3.layout.yaxis = {range: [0.995*min, 1.005*max]};
+                    Plotly.redraw('box3');
+                }
+                if(plotnumber == 4){
                     box4.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
-                    box4.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
-			        Plotly.redraw('box4');	
-			    }
-			    if(plotnumber == 5){
+                    box4.layout.yaxis = {range: [0.995*min, 1.005*max]};
+                    Plotly.redraw('box4');
+                }
+                if(plotnumber == 5){
                     box5.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
-                    box5.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
-			        Plotly.redraw('box5');	
-			    }			
-			    if(plotnumber == 6){
+                    box5.layout.yaxis = {range: [0.995*min, 1.005*max]};
+                    Plotly.redraw('box5');
+                }
+                if(plotnumber == 6){
                     box6.data = [{x: dataX, y: dataY,mode: 'markers',marker: { size: 5 },type: 'scatter',}];
-                    box6.layout.yaxis = {range: [(min-(0.005*min)), (max+(0.005*max))]};
-			        Plotly.redraw('box6');	
-			    }
-		    }); //end getJSON
-    }//end UpdatePlotX    
+                    box6.layout.yaxis = {range: [0.995*min, 1.005*max]};
+                    Plotly.redraw('box6');
+                }
+            }); //end getJSON
+    }//end UpdatePlotX
 
     </script>
 {% endblock %}

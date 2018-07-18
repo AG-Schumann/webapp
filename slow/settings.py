@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_mongodb_engine',
     'display',
 )
 
@@ -75,13 +76,22 @@ WSGI_APPLICATION = 'slow.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'your_DB_name',
-        'USER': 'your_DB_username',
-        'PASSWORD': 'your_password',
-        'HOST': 'your_DB_host',
-        'PORT': 'your_DB_port',
+    'default': {},
+    'settings' : {
+        'ENGINE': 'django_mongodb_engine',
+        'NAME': 'settings',
+        'USER': 'webapp',
+        'PASSWORD': 'blah',
+        'HOST': '127.0.0.1',
+        'PORT': '13178',
+    },
+    'data' : {
+        'ENGINE' : 'django_mongodb_engine',
+        'NAME' : 'data',
+        'USER' : 'webapp',
+        'PASSWORD' : 'blah',
+        'HOST' : '127.0.0.1',
+        'PORT' : '13178',
     }
 }
 
@@ -91,7 +101,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Zurich'
+TIME_ZONE = 'Europe/Berlin'
 #TIME_ZONE = 'UTC'
 
 USE_I18N = True

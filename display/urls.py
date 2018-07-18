@@ -1,20 +1,21 @@
-from django.conf.urls import url
+#from django.conf.urls import url
+from django.urls import re_path
 
 from . import views
 
 urlpatterns = [
     # index
-    url(r'^$', views.index, name='index'),
+    re_path(r'^$', views.index, name='index'),
 
     # monitor
-    url(r'^monitor/$', views.monitor, name='monitor'),
-    url(r'^monitor/(?P<controller>.+)/(?P<select>.+)/(?P<timerange>.+)/(?P<plotnumber>.+)/$', views.scopedraw, name='scopedraw'),
+    re_path(r'^monitor/$', views.monitor, name='monitor'),
+    re_path(r'^monitor/(?P<controller_name>[^/]+)/(?P<desc>[^/]+)/(?P<timerange>[1-4])/(?P<plotnumber>[1-6])/$', views.scopedraw, name='scopedraw'),
 
     # detail
-    url(r'^detail/(?P<config_controller>.+)/$', views.detail, name='detail'),
-    #url(r'^(?P<controller>.+)/(?P<select>.+)/(?P<t1>.+)/(?P<t2>.+)/(?P<t3>.+)/(?P<t4>.+)/(?P<t5>.+)/$', views.getCVSdata, name='getCVSdata'),
-    url(r'^data/(?P<controller>.+)/(?P<select>.+)/(?P<t1>.+)/(?P<t2>.+)/(?P<t3>.+)/(?P<t4>.+)/(?P<t5>.+)/$', views.getCVSdata, name='getCVSdata'),
-    url(r'^pdata/(?P<controller>.+)/(?P<select>.+)/(?P<t1>.+)/(?P<t2>.+)/(?P<t3>.+)/(?P<t4>.+)/(?P<t5>.+)/$', views.getRealdata, name='getRealdata'),
+    re_path(r'^detail/(?P<controller_name>[^/]+)/$', views.detail, name='detail'),
+
+    # get data
+    re_path(r'^data/(P?<controller_name>[^/]+)/(?P<desc>[^/]+)/(?P<time_start_str>[^/]+)/(?P<time_end_str>[^/]+)/$', views.getData, name='getdata')
 
 
 
