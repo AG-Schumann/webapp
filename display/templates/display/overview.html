@@ -1,0 +1,95 @@
+{% extends "display/base.html" %}
+
+{% block subtitle %}Doberview{% endblock %}
+
+{% block content %}
+        <div style="background-color:#eeeeee;padding:20px;">
+            <h2 style="background-color:#dddddd">Overview</h2>
+            <table style="width:100%">
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Runmode</th>
+                    <th rowspan="2">Last measurement</th>
+                </tr>
+                <div id="overviewtable">Empty!</div>
+            </table>
+        </div>
+        <br>
+        <div style="background-color:#eeeeee;padding:20px">
+            <table style="width:100%">
+                <h2 style="background-color:#dddddd">Recent log entries</h2>
+                <tr>
+                    <th>Time</th>
+                    <th>Level</th>
+                    <th>Name</th>
+                    <th>Message</th>
+                </tr>
+                <div id="logtable">None</div>
+            </table>
+        </div>
+        <br>
+        <div style="background-color:#eeeeee;padding:20px">
+            <table style="width:100%">
+                <h2 style="background-color:#dddddd">Recent alarms</h2>
+                <tr>
+                    <th>Time</th>
+                    <th>Message</th>
+                </tr>
+                <div id="alarmtable">None</div>
+            </table>
+        </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        function UpdateOverview(){
+        $.getJSON('updateoverview',function(data){
+            var html = "";
+            for (var name in data) {
+                configdoc = data[name];
+                html += '<tr><td>' + name + '</td>';
+                html += '<td>' + configdoc['status'] + '</td>';
+                html += '<td style="color:'+configdoc['color']+'">'+configdoc['runmode'] + '</td>';
+                html += '<td>' + configdoc['when'] + '</td>';
+                html += '<td>' + configdoc['values'] + '</td></tr>';
+            }
+            document.getElementById("overviewtable").innerHTML=html;
+        });
+        }
+        function UpdateLogs(){
+            $.getJSON('updatelogs', function(data){
+                var html="";
+                for (var i = 0; i < data.length; i+= 1) {
+                    html += '<tr><td>' + data[i]['when'] + '</td>';
+                    html += '<td>' + data[i]['level'] + '</td>';
+                    html += '<td>' + data[i]['name'] + '</td>';
+                    html += '<td>' + data[i]['message'] + '</td><tr>';
+                }
+                document.getElementById("logtable").innerHTML=html;
+            });
+        }
+        function UpdateAlarms(){
+            $.getJSON('updatealarms', function(data){
+                var html="";
+                for (var i = 0; i < data.length; i+=1) {
+                    html += "<tr><td>" + data[i]['when'] + '</td>';
+                    html += "<td>" + data[i]['message'] + '</td></tr>';
+                }
+                document.getElementById('alarmtable').innerHTML=html;
+            });
+        }
+    // This is an online oscilliscope so if we want it to constantly update we put a timeout callback to call the the UpdatePlots() function again
+    function update(){
+        UpdateOverview();
+        UpdateLogs();
+        UpdateAlarms();
+        setTimeout(update,10000);
+    }
+    // start updating when window loads
+    window.onload = update();
+
+    </script>
+{% endblock %}
+

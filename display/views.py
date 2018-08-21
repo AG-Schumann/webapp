@@ -12,6 +12,7 @@ from .models import Controller, getDataModel
 from .forms import NameForm
 import datetime
 import sys
+from pymongo import MongoClient
 
 
 # home page of the WebApp
@@ -82,6 +83,64 @@ def getData(request, controller_name, desc, time_start_str, time_end_str):
         data.append([controller.alarm_low[data_i], controller.alarm_high[data_i], 0])
 
     return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='display/detail/json')
+
+def getlogs(request):
+    logdocs = []
+    levels = {
+            10 : 'debug',
+            20 : 'info',
+            30 : 'warning',
+            40 : 'error',
+            50 : 'critical'
+    }
+    for doc in request.client['logging']['logs'].find({}, sort=[('when',-1)], limit=10):
+        logdocs.append({
+            'when' : doc['when'].isoformat(sep=' '),
+            'level' : levels[int(doc['level'])],
+            'name' : doc['name'],
+            'message' : doc['message']
+            })
+    return JsonResponse(logdocs,safe=False)
+
+def getalarms(request):
+    alarmdocs = []
+    for doc in request.client['logging']['alarm_history'].find({}, sort=[('when',-1)], limit=10):
+        alarmdocs.append({
+            'when' : doc['when'].isoformat(sep=' '),
+            'message' : doc['msg']
+            })
+    return JsonResponse(alarmdocs,safe=False)
+
+def GetStatusDocs(request):
+    statusdocs = {}
+    for configdoc in request.client['settings']['controllers'].find({}):
+        name = configdoc['name']
+        statusdocs[name] = {}
+        statusdocs[name]['running'] = configdoc['online']
+        statusdocs[name]['status'] = configdoc['status'][configdoc['runmode']]
+        statusdocs[name]['runmode'] = configdoc['runmode']
+        if statusdocs[name]['running']:
+            if statusdocs[name]['status'] == 'ON':
+                color = '#00FF00'
+            else:
+                color = '#FFFF00'
+        else:
+            color = '#FF0000'
+        statusdocs[name]['color'] = color
+        statusdocs[name]['when'] = datetime.datetime.now().isoformat(sep=' ')
+        statusdocs[name]['values'] = 'none'
+
+        for row in request.client['data'][name].find({},sort=[('when',-1)], limit=1):
+            statusdocs[name]['when'] = row['when'].isoformat(sep=' ')
+            statusdocs[name]['values'] = ' | '.join(map(str,row['data']))
+    return statusdocs
+
+def updateoverview(request):
+    statusdocs = GetStatusDocs(request)
+    return JsonResponse(statusdocs)
+
+def overview(request):
+    return render(request, 'display/overview.html', {'statusdocs' : GetStatusDocs(request)})
 
 # call monitor page of WebApp:
 #contains 4 scopes to monitor any data available (self updating)

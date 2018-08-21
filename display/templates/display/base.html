@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <html>
     <head>
-        <title>SlowControl</title>
+        <title>Doberview</title>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="{% static 'css/styles.css' %}">
@@ -40,7 +40,7 @@
                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
                 },
                 locale: {
-                    format: 'YYYY-MM-DD_HH:mm'
+                    format: 'YYYY-MM-DD HH:mm:SS'
                 }
             });
         });
@@ -62,6 +62,7 @@
         <div id='cssmenu'>
         <ul>
            <li><a href='{% url 'index' %}'><span>Home</span></a></li>
+           <li><a href='{% url 'index' %}overview/'><span>Overview></span></a></li>
            <li class='active has-sub'><a href='{% url 'index' %}'><span>Controllers</span></a>
               <ul>
                 {% if Controller_list %}
@@ -84,7 +85,7 @@
         <section>
         {% block content %}
         {% endblock %}
-        </section> 
+        </section>
     </body>
 
 

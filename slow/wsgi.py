@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/
 
 import os, sys
 
-"""sys.path.append('/directory/path/to/your/WebApp/location')
-sys.path.append('/directory/path/to/your/WebApp/location/slow')"""
+"""sys.path.append('/scratch/webapp')
+sys.path.append('/scratch/webapp/slow')"""
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "slow.settings")
 
 from django.core.wsgi import get_wsgi_application
